@@ -26,4 +26,4 @@ dependencies = [
 requires-python = ">= 3.6"
 
 [project.urls]
-Home = "https://github.com/AlexLM96/ephys_analysis"
+Home = "https://github.com/AlexLM96/invian"
