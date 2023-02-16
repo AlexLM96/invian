@@ -1,3 +1,4 @@
 #Distribution
 dist/
-fed3live.egg-info/
+invian.egg-info/
+build/

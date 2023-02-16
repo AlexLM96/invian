@@ -1,1 +1,1 @@
-from all_functions import *
+from .analysis import *
