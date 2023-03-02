@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue May 10 12:57:54 2022
-
-@author: alex.legariamacal
-"""
 
 import numpy as np
 import pandas as pd
@@ -13,7 +7,31 @@ from scipy.ndimage import gaussian_filter1d
 #%%
 
 #Peri-event histogram analysis for neurons
-def spiking_peh(spike_ts, ref_ts, min_max, bin_width, return_trials = False, raw_trials = False):
+def spiking_peh(spike_ts, ref_ts, min_max, bin_width, return_trials = False):
+    r"""
+    Function to perform a peri-event histogram of spiking activity.
+    
+    Parameters
+    ----------
+    spike_ts : array-like
+        Spike timestamps
+    ref_ts : array-like
+        Reference events that spiking will be aligned to
+    min_max : tuple
+        Time window in seconds around ref_ts to be analyzed
+    bin_width : float
+        Bin width in seconds
+    return_trials : bool
+        If true, returns a 2d-array where each row is a trial and each column is a time bin
+
+    Returns
+    ---------
+    trials_hist : 2d-array
+        Spiking activity around each timestamp in ref_ts
+    avg_trial : 1d-array
+        Average spiking activity around ref_ts
+    """
+    
     trials = []
     all_trials = []
     for event in ref_ts:
@@ -32,13 +50,7 @@ def spiking_peh(spike_ts, ref_ts, min_max, bin_width, return_trials = False, raw
     
     if return_trials:
         trials_hist = np.array([np.histogram(trial, bins)[0] for trial in trials])
-        if return_trials and raw_trials:
-            return trials_hist, trials, avg_trial
-        else:
-            return trials_hist, avg_trial
-    
-    elif raw_trials and not return_trials:
-        return trials, avg_trial
+        return trials_hist
     
     else:
         return avg_trial
@@ -47,6 +59,27 @@ def spiking_peh(spike_ts, ref_ts, min_max, bin_width, return_trials = False, raw
 
 #Downsample function for photometry (or any other continuous variable) data
 def downsample_1d(var_ts, var_vals,bin_width):
+    r"""
+    Downsamples 1d time series
+    
+    Parameters
+    ----------
+    var_ts : array-like
+        Variable timestamps
+    var_vals : array-like
+        Variable timestamps continuous values
+    bin_width : float
+        Bin width in seconds
+    return_trials : bool
+        If true, returns a 2d-array where each row is a trial and each column is a time bin
+
+    Returns
+    ---------
+    trials_hist : 2d-array
+        Spiking activity around each timestamp in ref_ts
+    avg_trial : 1d-array
+        Average spiking activity around ref_ts
+    """
     ts = pd.to_timedelta(var_ts, unit = 's')
     bin_ts = str(bin_width) + "S"
     var_series = pd.Series(var_vals)
