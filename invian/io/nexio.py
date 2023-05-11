@@ -1,8 +1,6 @@
 
 import numpy as np
-import sys
-sys.path.append('C:\\Users\\alex.legariamacal\\Box\\Kravitz Lab Box Drive\\Alex\\communal_code')
-import nexfile
+import .nexfile
 
 reader = nexfile.Reader(useNumpy=True)
 
