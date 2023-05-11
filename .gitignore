@@ -1,0 +1,8 @@
+#Distribution
+dist/
+invian.egg-info/
+build/
+
+#Docs
+docs/
+build/
