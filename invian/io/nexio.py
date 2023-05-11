@@ -1,7 +1,7 @@
 from .nexfile import *
 import numpy as np
 
-reader = nexfile.Reader(useNumpy=True)
+reader = Reader(useNumpy=True)
 
 #%%
 
