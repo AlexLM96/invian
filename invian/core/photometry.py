@@ -30,7 +30,6 @@ class photometry():
         b,a = butter(3, high, btype = 'low', fs = self.sr)
         return b, a
     
-    
     def hp_filter(self, low):
         b, a = self.butter_highpass(low)
         y = filtfilt(b, a, self.signal, padtype = "even")

@@ -1,0 +1,35 @@
+﻿analysis
+========
+
+.. automodule:: analysis
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      contvar_peh
+      downsample_1d
+      smooth_units
+      spiking_peh
+      subtract_baseline
+      zscore_df
+      zscore_tobaseline
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
