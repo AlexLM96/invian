@@ -21,7 +21,8 @@ dependencies = [
     'numpy',
     'scipy',
     'matplotlib',
-    'seaborn'
+    'seaborn',
+    'scikit-learn'
 ]
 requires-python = ">= 3.6"
 
