@@ -1,6 +1,5 @@
-
+from .nexfile import *
 import numpy as np
-import nexfile
 
 reader = nexfile.Reader(useNumpy=True)
 
