@@ -1,6 +1,6 @@
 
 import numpy as np
-import .nexfile
+import nexfile
 
 reader = nexfile.Reader(useNumpy=True)
 
