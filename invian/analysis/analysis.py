@@ -126,44 +126,98 @@ def contvar_peh(var_ts, var_vals, ref_ts, min_max, bin_width = False):
 #%%
 
 #Zscore every column of a dataframe
-def zscore_peh(data, trials="rows"):
+def zscore_peh(peh, trials="rows"):
+    r"""
+    Z-score peri-event histrogram by trial. 
+    Specially written for output of invian.contvar_peh or invian.spiking_peh.
     
-    if isinstance(data, np.ndarray):
-        if trials == "rows":
-            z_data = (data - data.mean(axis=1)[:,np.newaxis]) / data.std(axis=1)[:,np.newaxis]
-        elif trials == "columns":
-            z_data = (data - data.mean(axis=0)) / data.std(axis=0)
-    
-    elif isinstance(data, pd.core.frame.DataFrame):
-        if trials == "rows":
-            z_data = data.subtract(data.mean(axis=1),axis=0).divide(data.mean(axis=1),axis=0)
-        if trials == "columns":
-            z_data = data.subtract(data.mean(axis=0),axis=1).divide(data.mean(axis=0),axis=1)
+    Parameters
+    ----------
+    peh : 2d-array or pd.DataFrame
+        Peri-event histogram data. 
+    trials : str
+        If "rows", each row is assumed to be a trial and each columns a time bin.
+        If "columns", each column is assumed to be a trial an each row a time bin
 
-    return z_data
+    Returns
+    ---------
+    z_peh : 2d-array or pd.DataFrane
+        Z-scored 
+    """
+    if isinstance(peh, np.ndarray):
+        if trials == "rows":
+            z_peh = (peh - peh.mean(axis=1)[:,np.newaxis]) / peh.std(axis=1)[:,np.newaxis]
+        elif trials == "columns":
+            z_peh = (peh - peh.mean(axis=0)) / peh.std(axis=0)
+    
+    elif isinstance(peh, pd.core.frame.DataFrame):
+        if trials == "rows":
+            z_peh = peh.subtract(peh.mean(axis=1),axis=0).divide(peh.mean(axis=1),axis=0)
+        if trials == "columns":
+            z_peh = peh.subtract(peh.mean(axis=0),axis=1).divide(peh.mean(axis=0),axis=1)
+    else:
+        raise TypeError(f"Expected np.ndarray or pd.core.frame.DataFrame but got {type(peh)} instead")
+    
+    return z_peh
 
 #%%
 
 #Z-scoring every column of a dataframe to a specific baseline
-def zscore_peh_tobaseline(peh, min_max, baseline):
+def zscore_peh_tobaseline(peh, min_max, baseline, trials="rows"):
+    r"""
+    Z-score peri-event histrogram by trial to a specific baseline window. 
+    Specially written for output of invian.contvar_peh or invian.spiking_peh.
+    
+    Parameters
+    ----------
+    peh : 2d-array or pd.DataFrame
+        Peri-event histogram data
+    min_max : tuple
+        Minimum and maximum time, in seconds, around reference events (should be the same as input of
+        invian.contvar_peh or invian.spiking_peh).
+    baseline: tuple
+        Minimum and maximum baseline interval, in seconds. E.g. (-4,-2).
+    trials : str
+        If "rows", each row is assumed to be a trial and each columns a time bin.
+        If "columns", each column is assumed to be a trial an each row a time bin
+
+    Returns
+    ---------
+    z_peh : 2d-array or pd.DataFrane
+        Z-scored 
+    """
+    xaxis = np.linspace(min_max[0], min_max[1], peh.shape[1])
+    intervs = np.searchsorted(xaxis, list(baseline))
+    start = intervs[0]
+    end = intervs[1]
+    
     if isinstance(peh, np.ndarray):
-        xaxis = np.linspace(min_max[0], min_max[1], peh.shape[1])
-        intervs = np.searchsorted(xaxis, list(baseline))
-        start = intervs[0]
-        end = intervs[1]
+        if trials == "rows":
+            baseline = peh[:,start:end]
+            baseline_avg = baseline.mean(axis=1)
+            baseline_avg = baseline_avg[:,np.newaxis]
+            baseline_std = baseline.std(axis=1)
+            baseline_std = baseline_std[:,np.newaxis]
+            z_peh = np.divide(np.subtract(peh,baseline_avg), baseline_std)
+        elif trials == "columns":
+            print("not yet implemented")
+            z_peh = np.nan
 
-        baseline = peh[:,start:end]
-        baseline_avg = baseline.mean(axis=1)
-        baseline_avg = baseline_avg[:,np.newaxis]
-        baseline_std = baseline.std(axis=1)
-        baseline_std = baseline_std[:,np.newaxis]
+    elif isinstance(peh, pd.core.Frame.DataFrame):
+        if trials == "rows":
+            baseline = peh.iloc[:,start:end]
+            baseline_avg = baseline.mean(axis=1)
+            baseline_std = baseline.std(axis=1)
+            z_peh = peh.subtract(baseline_avg,axis=0).divide(baseline_std,axis=0)
 
-        z_peh = np.divide(np.subtract(peh,baseline_avg), baseline_std)
-            
-        return z_peh
+        elif trials == "columns":
+            print('not yet implemented')
+            z_peh = np.nan
     
     else:
         raise TypeError(f"Expected np.ndarray but got {type(peh)} instead")
+    
+    return z_peh
 
 #%%
 
