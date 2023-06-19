@@ -5,6 +5,43 @@ reader = Reader(useNumpy=True)
 
 #%%
 
+class Header():
+
+    def __init__(self, fileloc):
+        nexfile_header = reader.ReadNex5FileHeader(fileloc)
+        self._metadata = nexfile_header["FileHeader"]
+        self._variables = nexfile_header["Variables"]
+
+    @property
+    def variables(self):
+        var_types = {
+        0: 'neuron',
+        1: 'event',
+        2: 'interval',
+        3: 'waveform',
+        4: 'population_vector',
+        5: 'continuous',
+        6: 'marker'
+        }
+        vars = {var_types[v_type]: [] for v_type in var_types.keys()}
+        for var in self._variables:
+            c_var_type = var["Header"]["Type"]
+            vars[var_types[c_var_type]].append(var["Header"]["Name"])
+
+        return vars
+    
+    @property
+    def metadata(self):
+        return self._metadata
+
+
+
+
+#%%
+#Read header
+def read_header(fileloc):
+    return Header(fileloc)
+
 #Get neuron timestamps from nex5 file
 def get_neurons(file, neuron_names = "all", read_file = True):
     if read_file == True:

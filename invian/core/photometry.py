@@ -9,7 +9,7 @@ class photometry():
     
     """
     
-    def __init__(self, timestamps, signal, sampling_rate = None, name = None, annotations = None):
+    def __init__(self, timestamps, signal, sampling_rate = None):
         """
         
         """
@@ -20,7 +20,6 @@ class photometry():
             self.sr = self.timestamps.diff().mean()
         else:
             self.sr = sampling_rate
-        self.annotations = annotations
     
     def butter_highpass(self, low):
         b,a = butter(3, low, btype='high', fs = self.sr)
@@ -33,18 +32,18 @@ class photometry():
     def hp_filter(self, low):
         b, a = self.butter_highpass(low)
         y = filtfilt(b, a, self.signal, padtype = "even")
-        return photometry(self.timestamps, y, self.sr, self.name, self.annotations)
+        return photometry(self.timestamps, y, self.sr)
     
     def lp_filter(self, high):
         b,a = self.butter_lowpass(high)
         y = filtfilt(b, a, self.signal, padtype = 'even')
-        return photometry(self.timestamps, y, self.sr, self.name, self.annotations)
+        return photometry(self.timestamps, y, self.sr)
     
     def zscore(self):
         avg = np.mean(self.signal)
         std = np.std(self.signal)
         z_score = (self.signal - avg) / std
-        return photometry(self.timestamps, z_score, self.sr,  self.name, self.annotations)
+        return photometry(self.timestamps, z_score, self.sr)
         
     def plot(self):
         fig, ax = plt.subplots(figsize = (6,1))

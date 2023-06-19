@@ -145,21 +145,25 @@ def zscore_peh(data, trials="rows"):
 #%%
 
 #Z-scoring every column of a dataframe to a specific baseline
-def zscore_peh_tobaseline(df, baseline = (0,40)):
-    start = baseline[0]
-    end = baseline[1]
-    print(start, end)
-    for column in df:
-        baseline = df[column].iloc[start:end]
-        baseline_avg = np.mean(baseline)
-        baseline_std = np.std(baseline)
-        if baseline_std == 0:
-            pass
-        else:
-            column_zscore = (df[column] - baseline_avg) / baseline_std
-            df[column] = column_zscore
-        
-    return df
+def zscore_peh_tobaseline(peh, min_max, baseline):
+    if isinstance(peh, np.ndarray):
+        xaxis = np.linspace(min_max[0], min_max[1], peh.shape[1])
+        intervs = np.searchsorted(xaxis, list(baseline))
+        start = intervs[0]
+        end = intervs[1]
+
+        baseline = peh[:,start:end]
+        baseline_avg = baseline.mean(axis=1)
+        baseline_avg = baseline_avg[:,np.newaxis]
+        baseline_std = baseline.std(axis=1)
+        baseline_std = baseline_std[:,np.newaxis]
+
+        z_peh = np.divide(np.subtract(peh,baseline_avg), baseline_std)
+            
+        return z_peh
+    
+    else:
+        raise TypeError(f"Expected np.ndarray but got {type(peh)} instead")
 
 #%%
 
