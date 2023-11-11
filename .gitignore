@@ -1,5 +1,10 @@
 # Packaging
-docs/build/
+docs/
 build/
 invian.egg-info/
-
+.vs/
+invian/__pycache__/
+invian/core/__pycache__/
+invian/analysis/__pycache__/
+invian/io/__pycache__/
+dist/

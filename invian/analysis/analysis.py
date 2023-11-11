@@ -8,6 +8,43 @@ from sklearn.linear_model import Lasso
 
 #%%
 
+def rate_histogram(spike_ts, bin_width, bins=None):
+    r"""
+    Function to calculate firing rates from spike times.
+    
+    Parameters
+    ----------
+    spike_ts : array-like
+        Spike timestamps
+    bin_width : float
+        Width of bins in seconds
+    bins : array-like 
+        If None, bins rate histograms will go from t=0 to t=time last spike
+
+    
+
+    Returns
+    ---------
+    rate_hist : 1d-array
+        Firing rate historrgam of neuron
+    """
+
+    if bins == None:
+        last_spike = spike_ts[-1]
+        bins = np.arange(0, last_spike, bin_width)
+        
+
+    elif np.ndim(bins) != 0:
+        bins = bins
+
+    else: 
+        raise TypeError(f"Expected bins to be array-like type but got {type(bins)} instead")
+    
+    rate_hist = np.histogram(spike_ts, bins)
+
+    return rate_hist
+
+
 #Peri-event histogram analysis for neurons
 def spiking_peh(spike_ts, ref_ts, min_max, bin_width):
     r"""
